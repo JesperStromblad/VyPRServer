@@ -130,6 +130,13 @@ def register_verdicts():
     return "success"
 
 
+
+@app_object.route("/insert_test_data/", methods=["post"])
+def insert_test_data():
+    test_data = json.loads(request.data)
+    insertion_result = database.insert_test_call_data(test_data)
+    return json.dumps(insertion_result)
+
 @app_object.route("/insert_function_call_data/", methods=["post"])
 def insert_function_call_data():
     """

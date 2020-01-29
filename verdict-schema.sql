@@ -20,8 +20,10 @@ CREATE TABLE function_call (
     function int not null,
     time_of_call timestamp not null,
     end_time_of_call timestamp not null,
+    test_data int,
     http_request int not null,
     foreign key(function) references function(id),
+    foreign key(test_data) references test_data(id),
     foreign key(http_request) references http_request(id)
 );
 CREATE TABLE verdict (
@@ -39,6 +41,11 @@ CREATE TABLE http_request (
     id integer primary key autoincrement,
     time_of_request int not null,
     grouping text not null
+);
+CREATE TABLE test_data (
+    id integer primary key autoincrement,
+    test_name text,
+    test_result text
 );
 CREATE TABLE atom (
     id integer not null primary key autoincrement,

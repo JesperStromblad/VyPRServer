@@ -36,6 +36,10 @@ def insert_function_call_data(call_data):
 
     print(str(call_data))
 
+    # If test data exists
+    ###
+
+
     # insert http request
     # since this data is received from the monitored service potentially
     # multiple times per http request, we have to check whether a http
@@ -65,9 +69,12 @@ def insert_function_call_data(call_data):
 
     print("obtained function id")
 
+    ## Get the test id
+    id_test = call_data["test_data_id"]["row_id"]
+
     cursor.execute(
-        "insert into function_call (function, time_of_call, end_time_of_call, http_request) values(?, ?, ?, ?)",
-        [function_id, call_data["time_of_call"], call_data["end_time_of_call"], http_request_id])
+        "insert into function_call (function, time_of_call, end_time_of_call, test_data, http_request) values(?, ?, ?, ?, ?)",
+        [function_id, call_data["time_of_call"], call_data["end_time_of_call"], id_test, http_request_id])
     function_call_id = cursor.lastrowid
     connection.commit()
 
@@ -1169,3 +1176,37 @@ def compute_condition_sequence_and_path_length(observation_id):
     connection.close()
 
     return condition_sequence_and_path_length
+
+
+"""
+    Inserts the test data containing test name and test result (which can either by success, failure or error)
+    
+    """
+
+def insert_test_call_data(test_data):
+    """
+
+    :param test_data:
+    :return: json list
+    """
+
+
+    connection = get_connection()
+    cursor = connection.cursor()
+    try:
+
+        print (test_data)
+
+        # condition is new - insert it
+        cursor.execute("insert into test_data (test_name, test_result) values (? , ?)",
+                           [test_data["test_name"], test_data["test_result"]]
+                      )
+
+
+        connection.commit()
+        connection.close()
+        return {"row_id" : cursor.lastrowid }
+    except:
+        print("ERROR OCCURED DURING INSERTION:")
+        traceback.print_exc()
+        return "failure"
