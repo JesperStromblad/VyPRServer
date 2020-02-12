@@ -40,24 +40,22 @@ def insert_function_call_data(call_data):
     ###
 
 
-    # insert http request
+    # insert transaction
     # since this data is received from the monitored service potentially
-    # multiple times per http request, we have to check whether a http
-    # request already exists in the database
+    # multiple times per transaction, we have to check whether a transaction
+    # already exists in the database
 
-    http_requests = cursor.execute("select * from http_request where time_of_request = ?",
-                                   [call_data["http_request_time"]]).fetchall()
-    if len(http_requests) == 0:
-        cursor.execute("insert into http_request (time_of_request, grouping) values(?, ?)",
-                       [call_data["http_request_time"], ""])
-        http_request_id = cursor.lastrowid
+    transactions = cursor.execute("select * from trans where time_of_transaction = ?",
+                                  [call_data["transaction_time"]]).fetchall()
+    if len(transactions) == 0:
+        cursor.execute("insert into trans (time_of_transaction) values(?)",
+                       [call_data["transaction_time"]])
+        transaction_id = cursor.lastrowid
         connection.commit()
     else:
-        http_request_id = http_requests[0][0]
+        transaction_id = transactions[0][0]
 
-    print("http request created")
-
-    # insert call
+    print("transaction created")
 
     try:
 
@@ -73,8 +71,8 @@ def insert_function_call_data(call_data):
     id_test = call_data["test_data_id"]["row_id"]
 
     cursor.execute(
-        "insert into function_call (function, time_of_call, end_time_of_call, test_data, http_request) values(?, ?, ?, ?, ?)",
-        [function_id, call_data["time_of_call"], call_data["end_time_of_call"], id_test, http_request_id])
+        "insert into function_call (function, time_of_call, end_time_of_call, test_data, trans) values(?, ?, ?, ?, ?)",
+        [function_id, call_data["time_of_call"], call_data["end_time_of_call"], id_test, transaction_id])
     function_call_id = cursor.lastrowid
     connection.commit()
 

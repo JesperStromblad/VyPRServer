@@ -21,10 +21,10 @@ CREATE TABLE function_call (
     time_of_call timestamp not null,
     end_time_of_call timestamp not null,
     test_data int,
-    http_request int not null,
+    trans int not null,
     foreign key(function) references function(id),
     foreign key(test_data) references test_data(id),
-    foreign key(http_request) references http_request(id)
+    foreign key(trans) references trans(id)
 );
 CREATE TABLE verdict (
     id integer not null primary key autoincrement,
@@ -36,6 +36,10 @@ CREATE TABLE verdict (
     collapsing_atom_sub_index int not null,
     foreign key(binding) references binding(id),
     foreign key(function_call) references function_call(id)
+);
+CREATE TABLE trans (
+    id integer primary key autoincrement,
+    time_of_transaction timestamp not null
 );
 CREATE TABLE http_request (
     id integer primary key autoincrement,
