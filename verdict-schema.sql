@@ -41,11 +41,6 @@ CREATE TABLE trans (
     id integer primary key autoincrement,
     time_of_transaction timestamp not null
 );
-CREATE TABLE http_request (
-    id integer primary key autoincrement,
-    time_of_request int not null,
-    grouping text not null
-);
 CREATE TABLE test_data (
     id integer primary key autoincrement,
     test_name text,
@@ -82,6 +77,8 @@ CREATE TABLE observation (
     instrumentation_point int not null,
     verdict int not null,
     observed_value text not null,
+    observation_time timestamp not null,
+    observation_end_time timestamp not null,
     atom_index int not null,
     sub_index int not null,
     previous_condition integer not null,
