@@ -45,7 +45,10 @@ def insert_function_call_data(call_data):
     print("obtained function id")
 
     ## Get the test id
-    id_test = call_data["test_data_id"]["row_id"]
+    if call_data["test_data_id"] != None:
+        id_test = call_data["test_data_id"]["row_id"]
+    else:
+        id_test = None
 
     cursor.execute(
         "insert into function_call (function, time_of_call, end_time_of_call, test_data, trans) values(?, ?, ?, ?, ?)",
