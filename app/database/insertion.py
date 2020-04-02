@@ -45,10 +45,18 @@ def insert_function_call_data(call_data):
 
     print("obtained function id")
 
+    ## Get the test id
+    if call_data["test_data_id"] != None:
+       id_test = call_data["test_data_id"]["row_id"]
+    else:
+       id_test = None
+ 
+
+
     # construct program path and add a json form of the sequence to the row function_call row
 
     program_path = call_data["program_path"]
-
+ #   program_path = ["abc"]
     # check for the empty condition
     empty_condition = cursor.execute(
         "select * from path_condition_structure where serialised_condition = ''").fetchall()
@@ -59,13 +67,13 @@ def insert_function_call_data(call_data):
         empty_condition_id = empty_condition[0][0]
 
     new_program_path = [empty_condition_id] + program_path
-
+    print (new_program_path)
     # perform the function call insertion
 
     cursor.execute(
-        "insert into function_call (function, time_of_call, end_time_of_call, trans, path_condition_id_sequence)"
-        "values(?, ?, ?, ?, ?)",
-        [function_id, call_data["time_of_call"], call_data["end_time_of_call"], transaction_id,
+        "insert into function_call (function, time_of_call, end_time_of_call, test_data, trans, path_condition_id_sequence)"
+        "values(?, ?, ?, ?, ?, ?)",
+        [function_id, call_data["time_of_call"], call_data["end_time_of_call"], id_test, transaction_id,
          json.dumps(new_program_path)])
     function_call_id = cursor.lastrowid
     connection.commit()
@@ -327,3 +335,32 @@ def insert_branching_condition(dictionary):
         print("ERROR OCCURED DURING INSERTION:")
         traceback.print_exc()
         return "failure"
+
+def insert_test_call_data(test_data):
+    """
+ 
+    :param test_data:
+    :return: json list
+    """
+ 
+ 
+    connection = get_connection()
+    cursor = connection.cursor()
+    try:
+
+        print (test_data)
+ 
+        # condition is new - insert it
+        cursor.execute("insert into test_data (test_name, test_result) values (? , ?)",
+                            [test_data["test_name"], test_data["test_result"]]
+                      )
+ 
+ 
+        connection.commit()
+        connection.close()
+        return {"row_id" : cursor.lastrowid }
+    except:
+        print("ERROR OCCURED DURING INSERTION:")
+        traceback.print_exc()
+        return "failure"
+

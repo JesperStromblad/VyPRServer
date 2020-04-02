@@ -22,9 +22,15 @@ CREATE TABLE function_call (
     end_time_of_call timestamp not null,
     test_data int,
     trans int not null,
+    path_condition_id_sequence text not null,
     foreign key(function) references function(id),
     foreign key(test_data) references test_data(id),
     foreign key(trans) references trans(id)
+);
+CREATE TABLE test_data (
+    id integer primary key autoincrement,
+    test_name text,
+    test_result text
 );
 CREATE TABLE verdict (
     id integer not null primary key autoincrement,
@@ -40,11 +46,6 @@ CREATE TABLE verdict (
 CREATE TABLE trans (
     id integer primary key autoincrement,
     time_of_transaction timestamp not null
-);
-CREATE TABLE test_data (
-    id integer primary key autoincrement,
-    test_name text,
-    test_result text
 );
 CREATE TABLE atom (
     id integer not null primary key autoincrement,
@@ -76,60 +77,29 @@ CREATE TABLE observation (
     id integer not null primary key autoincrement,
     instrumentation_point int not null,
     verdict int not null,
-observed_value text not null,
-observation_time timestamp not null,
-observation_end_time timestamp not null,
-atom_index int not null,
-sub_index int not null,
-previous_condition integer not null,
-foreign key(previous_condition) references path_condition(id),
-foreign key(instrumentation_point) references instrumentation_point(id),
-foreign key(verdict) references verdict(id)
+    observed_value text not null,
+    observation_time timestamp not null,
+    observation_end_time timestamp not null,
+    atom_index int not null,
+    sub_index int not null,
+    previous_condition_offset integer not null,
+    foreign key(instrumentation_point) references instrumentation_point(id),
+    foreign key(verdict) references verdict(id)
 );
 CREATE TABLE observation_assignment_pair (
     observation int not null,
     assignment int not null,
-primary key(observation, assignment),
-foreign key(observation) references observation(id),
-foreign key(assignment) references assignment(id)
+    primary key(observation, assignment),
+    foreign key(observation) references observation(id),
+    foreign key(assignment) references assignment(id)
 );
 CREATE TABLE assignment (
     id integer not null primary key autoincrement,
-variable text not null,
-value text not null,
-type text not null
+    variable text not null,
+    value text not null,
+    type text not null
 );
 CREATE TABLE path_condition_structure (
     id integer not null primary key autoincrement,
-serialised_condition text not null
-);
-CREATE TABLE path_condition (
-    id integer not null primary key autoincrement,
-serialised_condition integer not null,
-next_path_condition integer not null,
-function_call integer not null,
-foreign key(function_call) references function_call(id),
-foreign key(next_path_condition) references path_condition(id)
-);
-CREATE TABLE search_tree (
-    id integer not null primary key autoincrement,
-root_vertex integer not null,
-instrumentation_point integer not null,
-foreign key(root_vertex) references search_tree_vertex(id),
-foreign key(instrumentation_point) references instrumentation_point(id)
-);
-
-CREATE TABLE search_tree_vertex (
-    id integer not null primary key autoincrement,
-observation integer not null,
-intersection integer,
-parent_vertex integer not null,
-foreign key(observation) references observation(id),
-foreign key(intersection) references intersection(id),
-foreign key(parent_vertex) references search_tree_vertex(id)
-);
-
-CREATE TABLE intersection (
-    id integer not null primary key autoincrement,
-condition_sequence_string text not null
+    serialised_condition text not null
 );
