@@ -20,17 +20,17 @@ CREATE TABLE function_call (
     function int not null,
     time_of_call timestamp not null,
     end_time_of_call timestamp not null,
-    test_data int,
     trans int not null,
     path_condition_id_sequence text not null,
     foreign key(function) references function(id),
-    foreign key(test_data) references test_data(id),
     foreign key(trans) references trans(id)
 );
 CREATE TABLE test_data (
     id integer primary key autoincrement,
     test_name text,
-    test_result text
+    test_result text,
+    start_time timestamp,
+    end_time timestamp
 );
 CREATE TABLE verdict (
     id integer not null primary key autoincrement,

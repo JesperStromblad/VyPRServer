@@ -45,11 +45,6 @@ def insert_function_call_data(call_data):
 
     print("obtained function id")
 
-    ## Get the test id
-    if call_data["test_data_id"] != None:
-       id_test = call_data["test_data_id"]["row_id"]
-    else:
-       id_test = None
  
 
 
@@ -71,9 +66,9 @@ def insert_function_call_data(call_data):
     # perform the function call insertion
 
     cursor.execute(
-        "insert into function_call (function, time_of_call, end_time_of_call, test_data, trans, path_condition_id_sequence)"
-        "values(?, ?, ?, ?, ?, ?)",
-        [function_id, call_data["time_of_call"], call_data["end_time_of_call"], id_test, transaction_id,
+        "insert into function_call (function, time_of_call, end_time_of_call, trans, path_condition_id_sequence)"
+        "values(?, ?, ?, ?, ?)",
+        [function_id, call_data["time_of_call"], call_data["end_time_of_call"], transaction_id,
          json.dumps(new_program_path)])
     function_call_id = cursor.lastrowid
     connection.commit()
@@ -351,8 +346,8 @@ def insert_test_call_data(test_data):
         print (test_data)
  
         # condition is new - insert it
-        cursor.execute("insert into test_data (test_name, test_result) values (? , ?)",
-                            [test_data["test_name"], test_data["test_result"]]
+        cursor.execute("insert into test_data (test_name, test_result, start_time, end_time) values (? , ? , ?, ?)",
+                            [test_data["test_name"], test_data["test_result"], test_data['start_time'], test_data['end_time']]
                       )
  
  
