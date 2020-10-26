@@ -194,6 +194,8 @@ def insert_property(property_dictionary):
     connection = get_connection()
     cursor = connection.cursor()
 
+    print (property_dictionary)
+
     try:
 
         # insert property
